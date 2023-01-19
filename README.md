@@ -68,49 +68,108 @@ kubectl create secret docker-registry registry-credentials --docker-server=https
     
     Use "executor [command] --help" for more information about a command.
 
+### Example 01 - Build the image from Git Dockerfile and Push to Docker Hub
+
+```
+kubectl apply -f example-01.yml
+
+kubectl logs -f kaniko
+
+kubectl delete po kaniko
+```
+
+### Example 02 - Build the image from Git Dockerfile and Push to Docker Hub
+
+Create your Token first:
+
+```
+kubectl create secret generic git-token --from-literal='GIT_TOKEN=<your-token>'
+```
+
+```
+kubectl apply -f example-02.yml
+
+kubectl logs -f kaniko
+
+kubectl delete po kaniko
+```
+
+### Example 03 - Build the image from local directory and push to Docker Hub
+
+The local directory must exist in the Node Group that the container is running.
+
+```
+kubectl apply -f example-03.yml
+
+kubectl logs -f kaniko
+
+kubectl delete po kaniko
+```
+
+### Example 03 - Build the image from local directory and without pushing to registry
+
+The local directory must exist in the Node Group that the container is running.
+
+```
+kubectl apply -f example-03.yml
+
+kubectl logs -f kaniko
+
+kubectl delete po kaniko
+```
 
 ### Build Log
 
-    $ kubectl logs -f kaniko
-    Enumerating objects: 16, done.
-    Counting objects: 100% (16/16), done.
-    Compressing objects: 100% (10/10), done.
-    Total 16 (delta 6), reused 15 (delta 5), pack-reused 0
-    ←[36mINFO←[0m[0003] Using dockerignore file: /kaniko/buildcontext/.dockerignore
-    ←[36mINFO←[0m[0003] Retrieving image manifest python:3.9.7-alpine3.14
-    ←[36mINFO←[0m[0003] Retrieving image python:3.9.7-alpine3.14 from registry index.docker.io
-    ←[36mINFO←[0m[0006] Built cross stage deps: map[]
-    ←[36mINFO←[0m[0006] Retrieving image manifest python:3.9.7-alpine3.14
-    ←[36mINFO←[0m[0006] Returning cached image manifest
-    ←[36mINFO←[0m[0006] Executing 0 build triggers
-    ←[36mINFO←[0m[0006] Unpacking rootfs as cmd RUN pip install flask requires it.
-    ←[36mINFO←[0m[0012] RUN pip install flask
-    ←[36mINFO←[0m[0012] Taking snapshot of full filesystem...        
-    ←[36mINFO←[0m[0012] cmd: /bin/sh
-    Collecting flask
-      Downloading Flask-2.0.3-py3-none-any.whl (95 kB)
-    Collecting Werkzeug>=2.0
-      Downloading Werkzeug-2.0.3-py3-none-any.whl (289 kB)
-    Collecting itsdangerous>=2.0
-      Downloading itsdangerous-2.1.2-py3-none-any.whl (15 kB)
-    Collecting click>=7.1.2
-      Downloading click-8.0.4-py3-none-any.whl (97 kB)
-    Collecting Jinja2>=3.0
-      Downloading Jinja2-3.1.0-py3-none-any.whl (132 kB)
-    Collecting MarkupSafe>=2.0
-      Downloading MarkupSafe-2.1.1-cp39-cp39-musllinux_1_1_x86_64.whl (29 kB)
-    Installing collected packages: MarkupSafe, Werkzeug, Jinja2, itsdangerous, click, flask
-    Successfully installed Jinja2-3.1.0 MarkupSafe-2.1.1 Werkzeug-2.0.3 click-8.0.4 flask-2.0.3 itsdangerous-2.1.2
-    WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
-    WARNING: You are using pip version 21.2.4; however, version 22.0.4 is available.You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
-    ←[36mINFO←[0m[0018] Taking snapshot of full filesystem...
-    ←[36mINFO←[0m[0018] WORKDIR /app
-    ←[36mINFO←[0m[0018] cmd: workdir
-    ←[36mINFO←[0m[0018] Changed working directory to /app
-    ←[36mINFO←[0m[0018] Creating directory /app
-    ←[36mINFO←[0m[0018] Taking snapshot of files...
-    ←[36mINFO←[0m[0018] COPY app.py .
-    ←[36mINFO←[0m[0018] Taking snapshot of files...
-    ←[36mINFO←[0m[0018] ENTRYPOINT ["python", "app.py"]
-    ←[36mINFO←[0m[0018] Pushing image to kunchalavikram/kaniko-demo-image:latest
-    ←[36mINFO←[0m[0026] Pushed index.docker.io/kunchalavikram/kaniko-demo-image@sha256:ba64ddfbec0d94e02dc9e5ab88b8cb64dabc59b55eff25d4ea71725687837ea7
+```
+$ kubectl logs -f kaniko
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Compressing objects: 100% (8/8), done.
+Total 11 (delta 2), reused 11 (delta 2), pack-reused 0
+INFO[0001] Using dockerignore file: /kaniko/buildcontext/.dockerignore
+INFO[0001] Retrieving image manifest python:3.9.7-alpine3.14
+INFO[0001] Retrieving image python:3.9.7-alpine3.14 from registry index.docker.io
+INFO[0001] Built cross stage deps: map[]
+INFO[0001] Retrieving image manifest python:3.9.7-alpine3.14
+INFO[0001] Returning cached image manifest
+INFO[0001] Executing 0 build triggers
+INFO[0001] Building stage 'python:3.9.7-alpine3.14' [idx: '0', base-idx: '-1']
+INFO[0001] Unpacking rootfs as cmd RUN pip install flask requires it.
+INFO[0004] RUN pip install flask
+INFO[0004] Initializing snapshotter ...
+INFO[0004] Taking snapshot of full filesystem...
+INFO[0005] Cmd: /bin/sh
+INFO[0005] Args: [-c pip install flask]
+INFO[0005] Running: [/bin/sh -c pip install flask]
+Collecting flask
+  Downloading Flask-2.2.2-py3-none-any.whl (101 kB)
+Collecting click>=8.0
+  Downloading click-8.1.3-py3-none-any.whl (96 kB)
+Collecting Jinja2>=3.0
+  Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
+Collecting Werkzeug>=2.2.2
+  Downloading Werkzeug-2.2.2-py3-none-any.whl (232 kB)
+Collecting importlib-metadata>=3.6.0
+  Downloading importlib_metadata-6.0.0-py3-none-any.whl (21 kB)
+Collecting itsdangerous>=2.0
+  Downloading itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+Collecting zipp>=0.5
+  Downloading zipp-3.11.0-py3-none-any.whl (6.6 kB)
+Collecting MarkupSafe>=2.0
+  Downloading MarkupSafe-2.1.2-cp39-cp39-musllinux_1_1_x86_64.whl (29 kB)
+Installing collected packages: zipp, MarkupSafe, Werkzeug, Jinja2, itsdangerous, importlib-metadata, click, flask
+Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.2 Werkzeug-2.2.2 click-8.1.3 flask-2.2.2 importlib-metadata-6.0.0 itsdangerous-2.1.2 zipp-3.11.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: You are using pip version 21.2.4; however, version 22.3.1 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+INFO[0012] Taking snapshot of full filesystem...
+INFO[0013] WORKDIR /app
+INFO[0013] Cmd: workdir
+INFO[0013] Changed working directory to /app
+INFO[0013] Creating directory /app
+INFO[0013] Taking snapshot of files...
+INFO[0013] COPY app.py .
+INFO[0013] Taking snapshot of files...
+INFO[0013] ENTRYPOINT ["python", "app.py"]
+INFO[0013] Pushing image to hachikoapp/kaniko-demo-image:latest
+```

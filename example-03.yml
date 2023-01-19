@@ -17,7 +17,7 @@ spec:
   volumes:
     - name: app-files
       hostPath:
-        path:  /home/william/workspace/companies/insightsoftware/kaniko-demo
+        path:  /home/william/workspace/companies/insightsoftware/kaniko-demo # Must exist in the Node Group
         type: Directory
     - name: kaniko-secret
       secret:
